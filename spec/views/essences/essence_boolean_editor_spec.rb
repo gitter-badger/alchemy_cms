@@ -1,14 +1,12 @@
 require 'spec_helper'
+include Alchemy::Admin::EssencesHelper
 
 describe 'alchemy/essences/_essence_boolean_editor' do
+  let(:element) { Alchemy::Element.new }
   let(:essence) { Alchemy::EssenceBoolean.new(ingredient: false) }
-  let(:content) { Alchemy::Content.new(essence: essence, name: 'Boolean') }
+  let(:content) { Alchemy::Content.new(essence: essence, name: 'Boolean', element: element) }
 
-  before do
-    allow(view).to receive(:render_content_name).and_return(content.name)
-    allow(view).to receive(:delete_content_link).and_return('')
-    allow(view).to receive(:render_hint_for).and_return('')
-  end
+  it_behaves_like "an essence editor partial"
 
   it "renders a checkbox" do
     render partial: "alchemy/essences/essence_boolean_editor", locals: {content: content}

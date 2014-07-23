@@ -1,10 +1,14 @@
 require 'spec_helper'
+include Alchemy::Admin::EssencesHelper
 
 describe 'alchemy/essences/_essence_editor_view' do
   let(:file)       { File.new(File.expand_path('../../../fixtures/image with spaces.png', __FILE__)) }
-  let(:attachment) { mock_model('Attachment', file: file, name: 'image', file_name: 'Image', icon_css_class: 'image') }
-  let(:essence)    { mock_model('EssenceFile', attachment: attachment) }
-  let(:content)    { mock_model('Content', essence: essence, settings: {}, dom_id: 'essence_file_1', form_field_name: '"contents[1][attachment_id]"') }
+  let(:attachment) { build_stubbed(:attachment, file: file) }
+  let(:essence)    { build_stubbed(:essence_file, attachment: attachment) }
+  let(:content)    { build_stubbed(:content, essence: essence) }
+  let(:element)    { Alchemy::Element.new }
+
+  it_behaves_like "an essence editor partial"
 
   subject do
     render partial: "alchemy/essences/essence_file_editor", locals: {content: content}
@@ -14,7 +18,7 @@ describe 'alchemy/essences/_essence_editor_view' do
   before do
     view.class.send :include, Alchemy::Admin::BaseHelper
     allow(view).to receive(:_t).and_return('')
-    allow(view).to receive(:label_and_remove_link).and_return('')
+    allow(content).to receive(:element) { element }
   end
 
   context 'with ingredient present' do
@@ -34,17 +38,39 @@ describe 'alchemy/essences/_essence_editor_view' do
       is_expected.to have_selector("a.edit_file[href='/admin/essence_files/#{essence.id}/edit?options=%7B%7D']")
     end
 
-    context 'with content settings `only`' do
-      it "renders a link to open the attachment library overlay with only pdfs" do
-        expect(content).to receive(:settings).at_least(:once).and_return({only: 'pdf'})
-        is_expected.to have_selector("a.assign_file[href='/admin/attachments?content_id=#{content.id}&only=pdf&options=%7B%7D']")
+    context "with settings[:except]" do
+      before do
+        allow(content).to receive(:settings) { {except: 'pdf'} }
+      end
+
+      it "does requests for these type of files" do
+        render_essence_editor(content)
+        expect(rendered).to have_selector('a[href*="except=pdf"]')
       end
     end
 
-    context 'with content settings `except`' do
-      it "renders a link to open the attachment library overlay without pdfs" do
-        expect(content).to receive(:settings).at_least(:once).and_return({except: 'pdf'})
-        is_expected.to have_selector("a.assign_file[href='/admin/attachments?content_id=#{content.id}&except=pdf&options=%7B%7D']")
+    context "with options[:except]" do
+      it "does requests for these type of files" do
+        render_essence_editor(content, except: 'pdf')
+        expect(rendered).to have_selector('a[href*="except=pdf"]')
+      end
+    end
+
+    context "with settings[:only]" do
+      before do
+        allow(content).to receive(:settings) { {only: 'pdf'} }
+      end
+
+      it "does requests for these type of files" do
+        render_essence_editor(content)
+        expect(rendered).to have_selector('a[href*="only=pdf"]')
+      end
+    end
+
+    context "with options[:only]" do
+      it "does requests for these type of files" do
+        render_essence_editor(content, only: 'pdf')
+        expect(rendered).to have_selector('a[href*="only=pdf"]')
       end
     end
   end
