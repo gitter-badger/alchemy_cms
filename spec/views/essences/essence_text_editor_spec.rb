@@ -21,7 +21,9 @@ describe 'alchemy/essences/_essence_text_editor' do
   end
 
   context "with linkable set to true via settings" do
-    before { content.stub(settings: {linkable: true}) }
+    before do
+      allow(content).to receive(:settings) { {linkable: true} }
+    end
 
     it "has hidden fields for all link attributes" do
       render_essence_editor(content)

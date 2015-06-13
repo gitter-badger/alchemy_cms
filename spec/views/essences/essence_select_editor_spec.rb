@@ -27,7 +27,9 @@ describe 'alchemy/essences/_essence_select_editor' do
   end
 
   context "with select_values given via settings" do
-    before { content.stub(settings: {select_values: %w(a b c)})}
+    before do
+      allow(content).to receive(:settings) { {select_values: %w(a b c)} }
+    end
 
     it "shows them as select box" do
       render_essence_editor(content)

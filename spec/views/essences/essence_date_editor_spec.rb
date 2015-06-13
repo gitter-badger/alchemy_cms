@@ -16,7 +16,9 @@ describe 'alchemy/essences/_essence_date_editor' do
   end
 
   context 'if settings[:default_value] is set' do
-    before { content.stub(settings: {default_value: '2014-12-06'}) }
+    before do
+      allow(content).to receive(:settings) { {default_value: '2014-12-06'} }
+    end
 
     it "the default value is displayed" do
       render_essence_editor(content)

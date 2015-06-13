@@ -286,6 +286,7 @@ shared_examples_for "an essence" do
 end
 
 shared_examples_for "an essence editor partial" do
+  let(:element) { Alchemy::Element.new }
   let(:content) { build_stubbed(:content, essence: essence, name: 'I am content', element: element) }
 
   before do

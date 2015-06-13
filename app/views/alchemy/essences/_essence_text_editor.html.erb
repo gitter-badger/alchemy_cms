@@ -1,6 +1,9 @@
 <% cache(content) do %>
-  <% linkable = value_from_settings_or_options(content,
-    local_assigns.fetch(:options, {}), :linkable) %>
+  <% linkable = content_settings_value(
+                  content,
+                  :linkable,
+                  local_assigns.fetch(:options, {})
+                ) %>
   <div class="essence_text content_editor<%= options[:display_inline].to_s == 'true' ? ' display_inline' : '' %>" id="<%= content.dom_id %>" data-content-id="<%= content.id %>">
     <%= label_and_remove_link(content) %>
     <%= text_field_tag(

@@ -23,7 +23,7 @@ module Alchemy
         subject { element_view_for(element) }
 
         before do
-          element.stub(contents: [content])
+          allow(element).to receive(:contents) { [content] }
         end
 
         context 'with content view partial present' do
@@ -93,9 +93,9 @@ module Alchemy
         end
 
         it "should not add any extra elements" do
-          element_editor_for(element) do
+          expect(element_editor_for(element) do
             'view'
-          end.should == 'view'
+          end).to eq 'view'
         end
       end
 
@@ -103,7 +103,7 @@ module Alchemy
         subject { element_editor_for(element) }
 
         before do
-          element.stub(contents: [content])
+          allow(element).to receive(:contents) { [content] }
         end
 
         it "renders element content editors by position" do
@@ -124,7 +124,7 @@ module Alchemy
         subject { element_editor_for(element) }
 
         before do
-          element.stub(available_contents: [content])
+          allow(element).to receive(:available_contents) { [content] }
         end
 
         it "renders new content button" do
@@ -136,7 +136,7 @@ module Alchemy
         subject { element_editor_for(element) }
 
         before do
-          element.stub(contents: [])
+          allow(element).to receive(:contents) { [] }
         end
 
         it "renders missing content buttons" do

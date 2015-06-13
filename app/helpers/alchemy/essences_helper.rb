@@ -133,6 +133,5 @@ module Alchemy
     def content_settings_value(content, key, options = {})
       content.settings.update(options || {}).symbolize_keys[key.to_sym]
     end
-
   end
 end
