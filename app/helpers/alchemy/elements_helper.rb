@@ -152,14 +152,30 @@ module Alchemy
         return
       end
 
-      element.store_page(@page) if part.to_sym == :view
-
-      render "alchemy/elements/#{element.name}_#{part}", {
+      options = {
         element: element,
         counter: counter,
-        options: options
-      }.merge(options.delete(:locals) || {})
+        options: options,
+        locals: options.delete(:locals) || {}
+      }
 
+      if element.nested_elements.present?
+        elements = element.nested_elements
+      else
+        elements = [element]
+      end
+
+      output = ""
+
+      elements.each do |element|
+        element.store_page(@page) if part.to_sym == :view
+
+        output += capture do
+          render "alchemy/elements/#{element.name}_#{part}", options
+        end
+      end
+
+      output
     rescue ActionView::MissingTemplate => e
       warning(%(
         Element #{part} partial not found for #{element.name}.\n

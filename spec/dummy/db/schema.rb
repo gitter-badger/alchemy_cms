@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150412103152) do
+ActiveRecord::Schema.define(version: 20150608204610) do
 
   create_table "alchemy_attachments", force: :cascade do |t|
     t.string   "name"
@@ -62,8 +62,10 @@ ActiveRecord::Schema.define(version: 20150412103152) do
     t.integer  "updater_id"
     t.integer  "cell_id"
     t.text     "cached_tag_list"
+    t.integer  "element_id"
   end
 
+  add_index "alchemy_elements", ["element_id"], name: "index_alchemy_elements_on_element_id"
   add_index "alchemy_elements", ["page_id", "position"], name: "index_elements_on_page_id_and_position"
 
   create_table "alchemy_elements_alchemy_pages", id: false, force: :cascade do |t|
@@ -203,6 +205,32 @@ ActiveRecord::Schema.define(version: 20150412103152) do
   end
 
   add_index "alchemy_legacy_page_urls", ["urlname"], name: "index_alchemy_legacy_page_urls_on_urlname"
+
+  create_table "alchemy_nodes", force: :cascade do |t|
+    t.string   "name"
+    t.string   "title"
+    t.string   "url"
+    t.integer  "lft"
+    t.integer  "rgt"
+    t.integer  "parent_id"
+    t.integer  "depth"
+    t.boolean  "nofollow",         default: false
+    t.integer  "navigatable_id"
+    t.string   "navigatable_type"
+    t.integer  "creator_id"
+    t.integer  "updater_id"
+    t.integer  "language_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "alchemy_nodes", ["creator_id"], name: "index_alchemy_nodes_on_creator_id"
+  add_index "alchemy_nodes", ["depth"], name: "index_alchemy_nodes_on_depth"
+  add_index "alchemy_nodes", ["language_id"], name: "index_alchemy_nodes_on_language_id"
+  add_index "alchemy_nodes", ["navigatable_type", "navigatable_id"], name: "index_alchemy_nodes_on_navigatable_type_and_navigatable_id"
+  add_index "alchemy_nodes", ["parent_id", "lft"], name: "index_alchemy_nodes_on_parent_id_and_lft"
+  add_index "alchemy_nodes", ["rgt"], name: "index_alchemy_nodes_on_rgt"
+  add_index "alchemy_nodes", ["updater_id"], name: "index_alchemy_nodes_on_updater_id"
 
   create_table "alchemy_pages", force: :cascade do |t|
     t.string   "name"
