@@ -23,8 +23,25 @@ module Alchemy
     include Alchemy::Touching
     include Alchemy::Hints
 
-    FORBIDDEN_DEFINITION_ATTRIBUTES = %w(contents available_contents amount picture_gallery taggable hint)
-    SKIPPED_ATTRIBUTES_ON_COPY = %w(id position folded created_at updated_at creator_id updater_id cached_tag_list)
+    FORBIDDEN_DEFINITION_ATTRIBUTES = [
+      "amount",
+      "available_contents",
+      "contents",
+      "hint",
+      "picture_gallery",
+      "taggable"
+    ].freeze
+
+    SKIPPED_ATTRIBUTES_ON_COPY = [
+      "cached_tag_list",
+      "created_at",
+      "creator_id",
+      "id",
+      "folded",
+      "position",
+      "updated_at",
+      "updater_id"
+    ].freeze
 
     acts_as_taggable
 
@@ -51,8 +68,8 @@ module Alchemy
     belongs_to :cell
     belongs_to :page
 
-    # A nested element belongs to another element.
-    belongs_to :element,
+    # A nested element belongs to a parent element.
+    belongs_to :parent_element,
       class_name: 'Alchemy::Element',
       foreign_key: :element_id
 
