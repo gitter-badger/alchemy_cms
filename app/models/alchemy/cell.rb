@@ -1,3 +1,4 @@
+# TODO: Remove cells and use nestable elements instead.
 # == Schema Information
 #
 # Table name: alchemy_cells

@@ -104,6 +104,7 @@ module Alchemy
     end
     alias_method :available_content_description_for, :available_content_definition_for
 
+    # TODO: Remove available_contents feature and use nestable elements instead!
     # The collection of available essence_types that can be created for
     # this element depending on its description in +elements.yml+.
     def available_contents
