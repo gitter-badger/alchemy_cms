@@ -9,7 +9,7 @@
           alchemy.list_admin_elements_path(page_id: page_for_links.id),
           remote: true,
           data: {
-            'page-id' => page_for_links.id,
+            'page-id': page_for_links.id,
             url: @url_prefix + page_for_links.urlname
           },
           class: "show_elements_to_link",
@@ -28,7 +28,7 @@
       <% else %>
         <%= link_to(page_for_links.name, '', {
           data: {
-            'page-id' => page_for_links.id,
+            'page-id': page_for_links.id,
             url: @url_prefix + page_for_links.urlname
           },
           title: _t('page_for_links.choose_page', name: page_for_links.name),
