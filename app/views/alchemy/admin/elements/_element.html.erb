@@ -1,23 +1,53 @@
-<div class="element_editor<%= element.folded ? ' folded' : '' %> <%= defined?(draggable) && !draggable ? 'not-draggable' : 'draggable'  %>" id="element_<%= element.id %>" data-element-id="<%= element.id %>">
-  <%= render :partial => "alchemy/admin/elements/element_head", :locals => {:element => element} %>
-  <% if !element.folded? %>
-    <%= form_for [:admin, element], :remote => true, :html => {:id => "element_#{element.id}_form"} do |f| %>
+<%= content_tag :div,
+  id: "element_#{element.id}",
+  data: {'element-id': element.id},
+  class: [
+    'element_editor',
+    element.folded ? 'folded' : 'expanded',
+    local_assigns[:draggable] == false ? 'not-draggable' : 'draggable'
+  ].join(' ') do %>
+
+  <%= render 'alchemy/admin/elements/element_head', {element: element} %>
+
+  <% unless element.folded? %>
+    <%= form_for [alchemy, :admin, element],
+      remote: true,
+      html: {id: "element_#{element.id}_form".html_safe} do |f| %>
+
       <div id="element_<%= element.id %>_errors" class="element_errors" style="display: none"></div>
+
       <div id="element_<%= element.id %>_content" class="element_content">
-        <%= render_editor(element) %>
+        <%== render_editor(element) %>
       </div>
+
       <% if element.has_validations? %>
-      <p class="validation_notice">
-        <span class="validation_indicator">*</span> <%= _t('Mandatory') %>
-      </p>
+        <p class="validation_notice">
+          <span class="validation_indicator">*</span> <%= _t('Mandatory') %>
+        </p>
       <% end %>
+
+      <% if element.nestable_elements.any? %>
+        <div class="nested-elements">
+          <%= render partial: 'element', collection: element.nested_elements %>
+        </div>
+        <%== link_to_dialog render_icon(:create) + _t(:add_an_element),
+          alchemy.new_admin_element_path(
+            parent_element_id: element.id,
+            page_id: element.page.id
+          ), {
+            size: "320x125",
+            title: _t(:add_an_element)
+          }, class: "button with_icon add-nestable-element-button" %>
+      <% end %>
+
       <% if element.taggable? %>
-      <div class="autocomplete_tag_list">
-        <%= f.label :tag_list %>
-        <%= render 'alchemy/admin/partials/autocomplete_tag_list', f: f %>
-      </div>
+        <div class="autocomplete_tag_list">
+          <%= f.label :tag_list %>
+          <%= render 'alchemy/admin/partials/autocomplete_tag_list', f: f %>
+        </div>
       <% end %>
-      <%= render :partial => 'alchemy/admin/elements/element_foot', :locals => {:element => element, :f => f} %>
+
+      <%= render 'alchemy/admin/elements/element_foot', {element: element, f: f} %>
     <% end %>
   <% end %>
-</div>
+<% end %>

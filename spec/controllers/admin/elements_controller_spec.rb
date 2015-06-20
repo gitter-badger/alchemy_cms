@@ -116,7 +116,7 @@ module Alchemy
       let(:alchemy_page) { build_stubbed(:page) }
 
       before do
-        expect(Page).to receive(:find_by_id).and_return(alchemy_page)
+        expect(Page).to receive(:find).and_return(alchemy_page)
       end
 
       it "assign variable for all available element definitions" do

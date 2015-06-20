@@ -95,6 +95,10 @@ FactoryGirl.define do
       unique true
       name 'header'
     end
+
+    trait :with_nestable_elements do
+      name 'slider'
+    end
   end
 
   factory :picture, :class => 'Alchemy::Picture' do

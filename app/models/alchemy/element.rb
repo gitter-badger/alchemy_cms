@@ -26,6 +26,7 @@ module Alchemy
     FORBIDDEN_DEFINITION_ATTRIBUTES = [
       "amount",
       "available_contents",
+      "nestable_elements",
       "contents",
       "hint",
       "picture_gallery",
@@ -178,10 +179,10 @@ module Alchemy
       def new_element_from_definition_by(attributes)
         remove_cell_name_from_element_name!(attributes)
 
-        element_scratch = definitions.detect { |el| el['name'] == attributes[:name] }
-        return if element_scratch.nil?
+        element_definition = Element.definition_by_name(attributes[:name])
+        return if element_definition.nil?
 
-        new(element_scratch.merge(attributes).except(*FORBIDDEN_DEFINITION_ATTRIBUTES))
+        new(element_definition.merge(attributes).except(*FORBIDDEN_DEFINITION_ATTRIBUTES))
       end
 
       def remove_cell_name_from_element_name!(attributes)
@@ -271,6 +272,11 @@ module Alchemy
       else
         "alchemy/elements/#{id}-#{page.published_at}"
       end
+    end
+
+    # A collection of element names that can be nested inside this element.
+    def nestable_elements
+      definition.fetch('nestable_elements', [])
     end
 
     private

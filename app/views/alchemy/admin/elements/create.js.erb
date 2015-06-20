@@ -14,7 +14,11 @@
   Alchemy.selectOrCreateCellTab('<%= @cell_name %>', '<%= @cell.nil? ? _t(:main_content) : @cell.name_for_label %>');
 <%- end -%>
 
+<%- if @element.parent_element -%>
+  $element_area = $('[data-element-id="<%= @element.parent_element_id %>"] .nested-elements');
+<%- else -%>
   $element_area = $('#cell_<%= @cell_name %>');
+<%- end -%>
 
 <%- if @insert_at_top -%>
   $element_area.prepend(element_html);

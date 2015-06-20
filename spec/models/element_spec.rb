@@ -613,5 +613,37 @@ module Alchemy
     it_behaves_like "having a hint" do
       let(:subject) { Element.new }
     end
+
+    describe "#nestable_elements" do
+      let(:element) { Element.new }
+
+      subject { element.nestable_elements }
+
+      context 'with nestable_elements defined' do
+        before do
+          allow(element).to receive(:definition) do
+            {
+              'nestable_elements' => %w(news article)
+            }
+          end
+        end
+
+        it 'returns an array containing all available nested element names' do
+          is_expected.to eq %w(news article)
+        end
+      end
+
+      context 'without nestable_elements defined' do
+        before do
+          allow(element).to receive(:definition) do
+            {}
+          end
+        end
+
+        it 'returns an empty array' do
+          is_expected.to eq []
+        end
+      end
+    end
   end
 end

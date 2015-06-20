@@ -267,7 +267,7 @@ module Alchemy
               end
             end
 
-            it "has the  generated elements in their cells" do
+            it "has the generated elements in their cells" do
               page.save!
               expect(page.cells.where(name: 'header').first.elements).not_to be_empty
             end
@@ -848,6 +848,41 @@ module Alchemy
         it "should not delete the trashed elements" do
           news_page.destroy
           expect(Element.trashed).not_to be_empty
+        end
+      end
+    end
+
+    describe "#elements" do
+      let(:page) { create(:page) }
+      let(:element_1) { create(:element) }
+      let(:element_2) { create(:element) }
+      let(:element_3) { create(:element) }
+
+      before do
+        page.elements << element_3
+        page.elements << element_1
+        page.elements << element_2
+        page.elements.to_a
+      end
+
+      it 'returns a ordered active record collection of elements on that page' do
+        expect(page.elements).to_not be_empty
+        expect(page.elements[0].id).to eq(element_3.id)
+        expect(page.elements[1].id).to eq(element_1.id)
+        expect(page.elements[2].id).to eq(element_2.id)
+      end
+
+      context 'with nestable elements' do
+        let(:nestable_element) { create(:element, :with_nestable_elements) }
+
+        before do
+          nestable_element.nested_elements << create(:element, name: 'slide')
+          page.elements << nestable_element
+        end
+
+        it 'does not contain nested elements of an element' do
+          expect(nestable_element.nested_elements).to_not be_empty
+          expect(page.elements).to_not include(nestable_element.nested_elements.first)
         end
       end
     end

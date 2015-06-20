@@ -6,7 +6,7 @@ module Alchemy
     included do
       attr_accessor :do_not_autogenerate
 
-      has_many :elements, -> { order(:position) }
+      has_many :elements, -> { where(parent_element_id: nil).order(:position) }
       has_many :contents, through: :elements
       has_and_belongs_to_many :to_be_sweeped_elements, -> { uniq },
         class_name: 'Alchemy::Element',
@@ -111,7 +111,13 @@ module Alchemy
     #       type: EssenceRichtext
     #
     def available_element_definitions(only_element_named = nil)
-      @_element_definitions = element_definitions
+      @_element_definitions ||= if only_element_named
+        definition = Element.definition_by_name(only_element_named)
+        element_definitions_by_name(definition['nestable_elements'])
+      else
+        element_definitions
+      end
+
       return [] if @_element_definitions.blank?
 
       @_existing_element_names = elements.not_trashed.pluck(:name)
